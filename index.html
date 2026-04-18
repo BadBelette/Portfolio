@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Damien Friconneau — DA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;1,300&family=Space+Mono&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --black: #0a0a0a;
+    --white: #f2f0eb;
+    --accent: #ff3c00;
+    --mid: #1e1e1e;
+    --muted: #555;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    cursor: none;
+    overflow-x: hidden;
+  }
+
+  /* CURSOR */
+  .cursor {
+    width: 10px; height: 10px;
+    background: var(--accent);
+    border-radius: 50%;
+    position: fixed;
+    top: 0; left: 0;
+    pointer-events: none;
+    z-index: 9999;
+    transition: transform 0.15s ease;
+    mix-blend-mode: normal;
+  }
+  .cursor-ring {
+    width: 36px; height: 36px;
+    border: 1px solid rgba(242,240,235,0.4);
+    border-radius: 50%;
+    position: fixed;
+    top: 0; left: 0;
+    pointer-events: none;
+    z-index: 9998;
+    transition: transform 0.35s cubic-bezier(0.23,1,0.32,1);
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 28px 48px;
+    mix-blend-mode: difference;
+  }
+  .nav-logo {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--white);
+  }
+  .nav-links { display: flex; gap: 40px; }
+  .nav-links a {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--white);
+    text-decoration: none;
+    transition: opacity 0.2s;
+  }
+  .nav-links a:hover { opacity: 0.4; }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 0 48px 60px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-bg-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(120px, 20vw, 280px);
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(255,255,255,0.04);
+    white-space: nowrap;
+    pointer-events: none;
+    user-select: none;
+    animation: floatBg 8s ease-in-out infinite;
+  }
+
+  @keyframes floatBg {
+    0%, 100% { transform: translate(-50%, -50%) translateY(0); }
+    50% { transform: translate(-50%, -50%) translateY(-20px); }
+  }
+
+  .hero-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 24px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.2s forwards;
+  }
+
+  .hero-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(72px, 12vw, 180px);
+    line-height: 0.9;
+    letter-spacing: -0.02em;
+    margin-bottom: 40px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.4s forwards;
+  }
+
+  .hero-title span { color: var(--accent); }
+
+  .hero-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.6s forwards;
+  }
+
+  .hero-desc {
+    font-size: 15px;
+    font-weight: 300;
+    line-height: 1.7;
+    color: rgba(242,240,235,0.6);
+    max-width: 380px;
+  }
+
+  .hero-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--white);
+    text-decoration: none;
+    border: 1px solid rgba(242,240,235,0.2);
+    padding: 16px 28px;
+    transition: all 0.3s;
+  }
+  .hero-cta:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--black);
+  }
+  .hero-cta .arrow { transition: transform 0.3s; }
+  .hero-cta:hover .arrow { transform: translateX(6px); }
+
+  .hero-line {
+    position: absolute;
+    bottom: 0; left: 48px;
+    width: 1px;
+    height: 80px;
+    background: linear-gradient(to bottom, transparent, var(--accent));
+    animation: lineGrow 1s 1s forwards;
+    transform-origin: top;
+    transform: scaleY(0);
+  }
+  @keyframes lineGrow {
+    to { transform: scaleY(1); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* MARQUEE */
+  .marquee-wrap {
+    border-top: 1px solid rgba(242,240,235,0.08);
+    border-bottom: 1px solid rgba(242,240,235,0.08);
+    padding: 20px 0;
+    overflow: hidden;
+    background: var(--mid);
+  }
+  .marquee-track {
+    display: flex;
+    gap: 0;
+    animation: marquee 18s linear infinite;
+    white-space: nowrap;
+  }
+  .marquee-item {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    letter-spacing: 0.1em;
+    color: rgba(242,240,235,0.3);
+    padding: 0 40px;
+  }
+  .marquee-item.accent { color: var(--accent); }
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  /* PROJECTS */
+  .section {
+    padding: 120px 48px;
+  }
+
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 80px;
+  }
+
+  .section-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: var(--accent);
+    display: block;
+    margin-bottom: 12px;
+  }
+
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(48px, 7vw, 96px);
+    line-height: 1;
+    letter-spacing: -0.01em;
+  }
+
+  .section-link {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(242,240,235,0.4);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(242,240,235,0.15);
+    padding-bottom: 4px;
+    transition: all 0.2s;
+  }
+  .section-link:hover { color: var(--white); border-color: var(--white); }
+
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 24px;
+  }
+
+  .project-card {
+    position: relative;
+    overflow: hidden;
+    background: var(--mid);
+    cursor: none;
+  }
+
+  .project-card:nth-child(1) { grid-column: span 8; }
+  .project-card:nth-child(2) { grid-column: span 4; }
+  .project-card:nth-child(3) { grid-column: span 4; }
+  .project-card:nth-child(4) { grid-column: span 8; }
+
+  .project-img {
+    width: 100%;
+    aspect-ratio: 16/9;
+    object-fit: cover;
+    display: block;
+    filter: grayscale(20%) contrast(1.1);
+    transition: transform 0.7s cubic-bezier(0.23,1,0.32,1), filter 0.4s;
+  }
+  .project-card:nth-child(2) .project-img,
+  .project-card:nth-child(3) .project-img {
+    aspect-ratio: 4/3;
+  }
+
+  .project-card:hover .project-img {
+    transform: scale(1.05);
+    filter: grayscale(0%) contrast(1.05);
+  }
+
+  .project-overlay {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    padding: 28px;
+    background: linear-gradient(to top, rgba(10,10,10,0.95) 0%, transparent 100%);
+    transform: translateY(8px);
+    transition: transform 0.4s;
+  }
+  .project-card:hover .project-overlay { transform: translateY(0); }
+
+  .project-year {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+
+  .project-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 0.02em;
+    line-height: 1;
+  }
+
+  .project-tag {
+    font-size: 11px;
+    color: rgba(242,240,235,0.4);
+    margin-top: 4px;
+  }
+
+  /* ABOUT */
+  .about-section {
+    padding: 120px 48px;
+    border-top: 1px solid rgba(242,240,235,0.06);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+
+  .about-left .section-num { margin-bottom: 12px; }
+
+  .about-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(48px, 6vw, 88px);
+    line-height: 0.95;
+    margin-bottom: 40px;
+  }
+
+  .about-title em {
+    font-style: normal;
+    color: var(--accent);
+  }
+
+  .about-text {
+    font-size: 15px;
+    line-height: 1.8;
+    color: rgba(242,240,235,0.6);
+    margin-bottom: 48px;
+  }
+
+  .skills-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .skill-item {
+    border: 1px solid rgba(242,240,235,0.08);
+    padding: 16px 20px;
+    transition: border-color 0.3s;
+  }
+  .skill-item:hover { border-color: var(--accent); }
+
+  .skill-name {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(242,240,235,0.5);
+    margin-bottom: 8px;
+  }
+
+  .skill-bar {
+    height: 2px;
+    background: rgba(242,240,235,0.08);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .skill-fill {
+    height: 100%;
+    background: var(--accent);
+    width: 0%;
+    transition: width 1.2s cubic-bezier(0.23,1,0.32,1);
+  }
+
+  .about-right {
+    position: relative;
+  }
+
+  .about-photo-wrap {
+    position: relative;
+    display: inline-block;
+  }
+
+  .about-photo-placeholder {
+    width: 100%;
+    aspect-ratio: 3/4;
+    background: var(--mid);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    letter-spacing: 0.2em;
+    color: rgba(242,240,235,0.15);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .about-photo-placeholder::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 10px,
+      rgba(255,255,255,0.015) 10px,
+      rgba(255,255,255,0.015) 11px
+    );
+  }
+
+  .about-deco {
+    position: absolute;
+    top: -20px;
+    right: -20px;
+    width: 120px;
+    height: 120px;
+    border: 1px solid var(--accent);
+    z-index: -1;
+  }
+
+  .exp-badge {
+    position: absolute;
+    bottom: -20px;
+    left: -20px;
+    background: var(--accent);
+    color: var(--black);
+    padding: 20px 24px;
+    font-family: 'Bebas Neue', sans-serif;
+  }
+  .exp-badge .num { font-size: 48px; line-height: 1; }
+  .exp-badge .label { font-size: 12px; letter-spacing: 0.1em; }
+
+  /* CONTACT */
+  .contact-section {
+    padding: 120px 48px;
+    border-top: 1px solid rgba(242,240,235,0.06);
+    text-align: center;
+  }
+
+  .contact-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(64px, 10vw, 160px);
+    line-height: 0.9;
+    letter-spacing: -0.02em;
+    margin-bottom: 48px;
+  }
+
+  .contact-title span { color: var(--accent); }
+
+  .contact-subtitle {
+    font-size: 15px;
+    color: rgba(242,240,235,0.5);
+    margin-bottom: 56px;
+    max-width: 440px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.7;
+  }
+
+  .contact-email {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(24px, 4vw, 48px);
+    color: var(--white);
+    text-decoration: none;
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 4px;
+    transition: color 0.2s;
+    display: inline-block;
+    margin-bottom: 48px;
+  }
+  .contact-email:hover { color: var(--accent); }
+
+  .social-links {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+  }
+  .social-link {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(242,240,235,0.35);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .social-link:hover { color: var(--white); }
+
+  /* FOOTER */
+  footer {
+    padding: 32px 48px;
+    border-top: 1px solid rgba(242,240,235,0.06);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer-text {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(242,240,235,0.2);
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<nav>
+  <span class="nav-logo">DF — Portfolio</span>
+  <div class="nav-links">
+    <a href="#projets">Projets</a>
+    <a href="#about">À propos</a>
+    <a href="#contact">Contact</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg-text">DAMIEN</div>
+  <div class="hero-line"></div>
+  <div class="hero-tag">Directeur Artistique · Paris</div>
+  <h1 class="hero-title">
+    Damien<br>
+    <span>Friconneau</span>
+  </h1>
+  <div class="hero-bottom">
+    <p class="hero-desc">
+      DA & Lead Graphiste avec 8 ans d'expérience.<br>
+      Je crée des univers visuels forts — identité,<br>
+      motion, direction de création.
+    </p>
+    <a href="#projets" class="hero-cta">
+      Voir les projets <span class="arrow">→</span>
+    </a>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap">
+  <div class="marquee-track">
+    <span class="marquee-item">Direction Artistique</span>
+    <span class="marquee-item accent">✦</span>
+    <span class="marquee-item">Identité Visuelle</span>
+    <span class="marquee-item accent">✦</span>
+    <span class="marquee-item">Motion Design</span>
+    <span class="marquee-item accent">✦</span>
+    <span class="marquee-item">Lead Graphiste</span>
+    <span class="marquee-item accent">✦</span>
+    <span class="marquee-item">Montage Vidéo</span>
+    <span class="marquee-item accent">✦</span>
+    <span class="marquee-item">Direction Artistique</span>
+    <span class="marquee-item accent">✦</span>
+    <span class="marquee-item">Identité Visuelle</span>
+    <span class="marquee-item accent">✦</span>
+    <span class="marquee-item">Motion Design</span>
+    <span class="marquee-item accent">✦</span>
+    <span class="marquee-item">Lead Graphiste</span>
+    <span class="marquee-item accent">✦</span>
+    <span class="marquee-item">Montage Vidéo</span>
+    <span class="marquee-item accent">✦</span>
+  </div>
+</div>
+
+<!-- PROJECTS -->
+<section class="section" id="projets">
+  <div class="section-header">
+    <div>
+      <span class="section-num">01 — Projets</span>
+      <h2 class="section-title">Sélection</h2>
+    </div>
+    <a href="#" class="section-link">Voir tout →</a>
+  </div>
+
+  <div class="projects-grid">
+    <div class="project-card">
+      <img class="project-img" src="https://cdn.myportfolio.com/ed4027668b737e44139befe1e0b1867e/3478d141-3c5f-4517-98e6-9e859f9a579a_rwc_455x0x1011x570x32.png?h=daed749c6a30b841be986f4891fecd4e" alt="Piscine Contest">
+      <div class="project-overlay">
+        <div class="project-year">2025</div>
+        <div class="project-name">Piscine Contest</div>
+        <div class="project-tag">Direction Artistique · Graphisme</div>
+      </div>
+    </div>
+    <div class="project-card">
+      <img class="project-img" src="https://cdn.myportfolio.com/ed4027668b737e44139befe1e0b1867e/1a5b1a11-a09d-4a91-ac2e-be99f7cf68bd_rwc_459x0x1011x570x32.png?h=925ab82a4923d86c4e8baa545fa390fd" alt="Panneaux Routiers">
+      <div class="project-overlay">
+        <div class="project-year">2025</div>
+        <div class="project-name">Panneaux Routiers VE</div>
+        <div class="project-tag">Design · Signalétique</div>
+      </div>
+    </div>
+    <div class="project-card">
+      <img class="project-img" src="https://cdn.myportfolio.com/ed4027668b737e44139befe1e0b1867e/f9dd9f59-3f65-4408-b9a0-2cedc4a06147_rwc_554x58x807x455x32.png?h=da6e5b8b6dc87672122304a0d63e8311" alt="Refont Logo VE">
+      <div class="project-overlay">
+        <div class="project-year">2024</div>
+        <div class="project-name">Refont Logo VE</div>
+        <div class="project-tag">Identité · Branding</div>
+      </div>
+    </div>
+    <div class="project-card">
+      <img class="project-img" src="https://cdn.myportfolio.com/ed4027668b737e44139befe1e0b1867e/00c3fe13-027b-41e7-989b-7a5c2f20b3e4_rwc_0x715x1920x1082x32.jpg?h=55dbbb51228d97b2f57497b67699c462" alt="Montage Vidéo">
+      <div class="project-overlay">
+        <div class="project-year">2025</div>
+        <div class="project-name">Montage Vidéo & Graphique</div>
+        <div class="project-tag">Motion · Vidéo</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="about-section" id="about">
+  <div class="about-left">
+    <span class="section-num">02 — À propos</span>
+    <h2 class="about-title">Créer,<br>c'est<br><em>diriger.</em></h2>
+    <p class="about-text">
+      DA et Lead Graphiste depuis 8 ans, je travaille à l'intersection du graphisme, du motion et de la direction de création. Mon moteur : construire des univers visuels cohérents qui racontent quelque chose.
+    </p>
+    <div class="skills-grid" id="skillsGrid">
+      <div class="skill-item">
+        <div class="skill-name">Illustrator</div>
+        <div class="skill-bar"><div class="skill-fill" data-width="95"></div></div>
+      </div>
+      <div class="skill-item">
+        <div class="skill-name">Photoshop</div>
+        <div class="skill-bar"><div class="skill-fill" data-width="90"></div></div>
+      </div>
+      <div class="skill-item">
+        <div class="skill-name">After Effects</div>
+        <div class="skill-bar"><div class="skill-fill" data-width="85"></div></div>
+      </div>
+      <div class="skill-item">
+        <div class="skill-name">Premiere Pro</div>
+        <div class="skill-bar"><div class="skill-fill" data-width="80"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="about-right">
+    <div class="about-photo-wrap">
+      <div class="about-photo-placeholder">PHOTO</div>
+      <div class="about-deco"></div>
+      <div class="exp-badge">
+        <div class="num">8+</div>
+        <div class="label">ans d'expérience</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact-section" id="contact">
+  <span class="section-num" style="display:block;margin-bottom:24px;">03 — Contact</span>
+  <h2 class="contact-title">Travaillons<br><span>ensemble.</span></h2>
+  <p class="contact-subtitle">Tu cherches un DA pour rejoindre ton équipe ? Parlons-en.</p>
+  <a href="mailto:damien@exemple.fr" class="contact-email">damien@exemple.fr</a>
+  <div class="social-links">
+    <a href="#" class="social-link">LinkedIn</a>
+    <a href="#" class="social-link">Behance</a>
+    <a href="#" class="social-link">Instagram</a>
+  </div>
+</section>
+
+<footer>
+  <span class="footer-text">© 2025 Damien Friconneau</span>
+  <span class="footer-text">DA — Lead Graphiste</span>
+</footer>
+
+<script>
+  // Cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.transform = `translate(${mx - 5}px, ${my - 5}px)`;
+  });
+
+  function animRing() {
+    rx += (mx - rx) * 0.12;
+    ry += (my - ry) * 0.12;
+    ring.style.transform = `translate(${rx - 18}px, ${ry - 18}px)`;
+    requestAnimationFrame(animRing);
+  }
+  animRing();
+
+  // Skill bars on scroll
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.querySelectorAll('.skill-fill').forEach(bar => {
+          bar.style.width = bar.dataset.width + '%';
+        });
+      }
+    });
+  }, { threshold: 0.3 });
+
+  const skillsGrid = document.getElementById('skillsGrid');
+  if (skillsGrid) observer.observe(skillsGrid);
+</script>
+</body>
+</html>
